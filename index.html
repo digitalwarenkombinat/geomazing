@@ -100,7 +100,7 @@ var LZString={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234
 	</div>
 	<tw-storydata name="Geomazing" startnode="1" creator="Twine" creator-version="2.5.1" format="SugarCube" format-version="2.36.1" ifid="4FD4D3EF-DA00-4464-B208-090F392DD473" options="" tags="" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">body { margin: 0; padding: 0; }
 #passages { max-width: 100vw; }
-#map { position: absolute; top: 0; bottom: 0; width: 100%; }</style><script role="script" id="twine-user-script" type="text/twine-javascript">setup.JSLoaded = false;
+#map { height: 90vh }</style><script role="script" id="twine-user-script" type="text/twine-javascript">setup.JSLoaded = false;
 var lockID = LoadScreen.lock();
 importStyles("https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css");
 importScripts("https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js")
@@ -132,6 +132,9 @@ trackUserLocation: true,
 showUserHeading: true
 })
 );
+map.on(&#39;load&#39;, function () {
+    map.resize();
+});
 &lt;/script&gt;</tw-passagedata></tw-storydata>
 	<script id="script-sugarcube" type="text/javascript">
 	/*! SugarCube JS */
