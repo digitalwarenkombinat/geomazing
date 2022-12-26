@@ -4,8 +4,6 @@
 <meta charset="UTF-8" />
 <title>Geomazing</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<link href="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css" rel="stylesheet">
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js"></script>
 <!--
 
 SugarCube (v2.36.1): A free (gratis and libre) story format.
@@ -101,7 +99,21 @@ var LZString={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234
 		<div id="init-loading"><div>Loading&hellip;</div></div>
 	</div>
 	<tw-storydata name="Geomazing" startnode="1" creator="Twine" creator-version="2.5.1" format="SugarCube" format-version="2.36.1" ifid="4FD4D3EF-DA00-4464-B208-090F392DD473" options="" tags="" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">body { margin: 0; padding: 0; }
-#map { position: absolute; top: 0; bottom: 0; width: 100%; }</style><script role="script" id="twine-user-script" type="text/twine-javascript"></script><tw-passagedata pid="1" name="Intro" tags="" position="1225,575" size="100,100">&lt;div id=&quot;map&quot;&gt;&lt;/div&gt;
+#passages { max-width: 100vw; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }</style><script role="script" id="twine-user-script" type="text/twine-javascript">setup.JSLoaded = false;
+var lockID = LoadScreen.lock();
+importStyles("https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css");
+importScripts("https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js")
+	.then(function() {
+		setup.JSLoaded = true;
+		Engine.play(passage(), true);
+		LoadScreen.unlock(lockID);
+	}).catch(function(error) {
+		alert(error);
+	}
+);
+
+</script><tw-passagedata pid="1" name="Intro" tags="" position="1225,575" size="100,100">[[Starte das Abenteuer|Map]]</tw-passagedata><tw-passagedata pid="2" name="Map" tags="" position="1350,575" size="100,100">&lt;div id=&quot;map&quot;&gt;&lt;/div&gt;
 &lt;script&gt;
 mapboxgl.accessToken = &#39;pk.eyJ1IjoiZ2VyZGVzcXVlIiwiYSI6ImNsNnowcWg1eDAwZmQzY211cTYyZ2FsaHYifQ.gOYM4cFcp8rcqUCwsgsjug&#39;;
 const map = new mapboxgl.Map({
