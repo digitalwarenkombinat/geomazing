@@ -105,7 +105,7 @@ var LZString={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234
 #map { height: 100vh }</style><script role="script" id="twine-user-script" type="text/twine-javascript">setup.JSLoaded = false;
 var lockID = LoadScreen.lock();
 importStyles("https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css");
-importScripts("https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js")
+importScripts("https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js", "https://unpkg.com/@turf/turf@6/turf.min.js")
 	.then(function() {
 		setup.JSLoaded = true;
 		Engine.play(passage(), true);
@@ -117,18 +117,100 @@ importScripts("https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js")
 
 </script><tw-passagedata pid="1" name="Intro" tags="" position="1225,575" size="100,100">[[Starte das Abenteuer|Map]]</tw-passagedata><tw-passagedata pid="2" name="Map" tags="" position="1350,575" size="100,100">&lt;div id=&quot;map&quot;&gt;&lt;/div&gt;
 &lt;script&gt;
+var createGeoJSONCircle = function(center, radius) {
+  const points = 64;
+
+  const coords = {
+      latitude: center[1],
+      longitude: center[0]
+  };
+
+  let ret = [];
+  const distanceX = radius/(111.320*Math.cos(coords.latitude*Math.PI/180));
+  const distanceY = radius/110.574;
+
+  var theta, x, y;
+  for(var i=0; i&lt;points; i++) {
+      theta = (i/points)*(2*Math.PI);
+      x = distanceX*Math.cos(theta);
+      y = distanceY*Math.sin(theta);
+
+      ret.push([coords.longitude+x, coords.latitude+y]);
+  }
+  ret.push(ret[0]);
+
+  return {
+      &quot;type&quot;: &quot;geojson&quot;,
+      &quot;data&quot;: {
+          &quot;type&quot;: &quot;FeatureCollection&quot;,
+          &quot;features&quot;: [{
+              &quot;type&quot;: &quot;Feature&quot;,
+              &quot;geometry&quot;: {
+                  &quot;type&quot;: &quot;Polygon&quot;,
+                  &quot;coordinates&quot;: [ret]
+              }
+          }]
+      }
+  };
+};
+
+class CircularGeofenceRegion {
+  constructor(opts) {
+    Object.assign(this, opts)
+  }
+
+  inside(lat2, lon2) {
+    const lat1 = this.latitude
+    const lon1 = this.longitude
+    const R = 63710; // Earth&#39;s radius in m
+    console.log(lat1, lat2, lon1, lon2)
+  
+    return Math.acos(Math.sin(lat1)*Math.sin(lat2) + 
+                     Math.cos(lat1)*Math.cos(lat2) *
+                     Math.cos(lon2-lon1)) * R &lt; this.radius;
+  }
+}
+
+const fenceA = new CircularGeofenceRegion({
+  id: &#39;lene_tauscho&#39;,
+  latitude: 51.3331807,
+  longitude: 12.4043691,
+  radius: 10 // meters
+});
+
+const fenceB = new CircularGeofenceRegion({
+  id: &#39;lene_tischtennis&#39;,
+  latitude: 51.3334271,
+  longitude: 12.4023682,
+  radius: 10 // meters
+});
+
+const fenceC = new CircularGeofenceRegion({
+  id: &#39;wiedebach_spielplatz&#39;,
+  latitude: 51.3098843,
+  longitude: 12.3776221,
+  radius: 10 // meters
+});
+
+const fenceD = new CircularGeofenceRegion({
+  id: &#39;wiedebach_tram&#39;,
+  latitude: 51.3099849,
+  longitude: 12.3787808,
+  radius: 10 // meters
+});
+
+const fences = [fenceA, fenceB, fenceC, fenceD]
+
 mapboxgl.accessToken = &#39;pk.eyJ1IjoiZ2VyZGVzcXVlIiwiYSI6ImNsNnowcWg1eDAwZmQzY211cTYyZ2FsaHYifQ.gOYM4cFcp8rcqUCwsgsjug&#39;;
-const isInside = true;
+
 // Create new Mapbox
 const map = new mapboxgl.Map({
   container: &#39;map&#39;,
-  style: &#39;mapbox://styles/mapbox/outdoors-v12&#39;,
-  center: [12, 51],
-  zoom: 1
+  style: &#39;mapbox://styles/gerdesque/clckluor2000l14lbev40r74r&#39;,
 });
 
 // Add fullscreen control
-map.addControl(new mapboxgl.FullscreenControl());
+// map.addControl(new mapboxgl.FullscreenControl());
 
 // Add geolocate control
 const geolocate = new mapboxgl.GeolocateControl({
@@ -148,10 +230,11 @@ geolocate.on(&#39;geolocate&#39;, ({coords}) =&gt; {
   console.log(&#39;Your current position is:&#39;);
   console.log(`Latitude : ${lat}`);
   console.log(`Longitude: ${lon}`);
-  // for (const fence of fences) {
-  //   if (fence.inside(lat, lon)) {
-  //   }
-  // }
+  for (const fence of fences) {
+    if (fence.inside(lat, lon)) {
+      map.setPaintProperty(fence.id, &#39;fill-color&#39;, &#39;red&#39;);
+    }
+  }
 });
 
 map.on(&#39;load&#39;, () =&gt; {
@@ -162,58 +245,23 @@ function renderMap() {
   // Resize map on load
   map.resize();
 
-  // Add polygon &#39;lene_wiese&#39;
-  map.addSource(&#39;lene_wiese&#39;, {
-    &#39;type&#39;: &#39;geojson&#39;,
-    &#39;data&#39;: {
-      &#39;type&#39;: &#39;Feature&#39;,
-        &#39;geometry&#39;: {
-          &#39;type&#39;: &#39;Polygon&#39;,
-          &#39;coordinates&#39;: [
-            [
-              [12.4043691, 51.3331807],
-              [12.4044308, 51.3331975],
-              [12.4045005, 51.3334103],
-              [12.4044496, 51.3334522],
-              [12.4030682, 51.333717],
-              [12.4029797, 51.3336969],
-              [12.4028644, 51.333469],
-              [12.4043691, 51.3331807]
-            ]
-          ]
-        }
-    }
-  });
+  map.addSource(fenceA.id, createGeoJSONCircle([fenceA.longitude, fenceA.latitude], fenceA.radius/1000));
+  map.addSource(fenceB.id, createGeoJSONCircle([fenceB.longitude, fenceB.latitude], fenceB.radius/1000));
+  map.addSource(fenceC.id, createGeoJSONCircle([fenceC.longitude, fenceC.latitude], fenceC.radius/1000));
+  map.addSource(fenceD.id, createGeoJSONCircle([fenceD.longitude, fenceD.latitude], fenceD.radius/1000));
+  
+  
   map.addLayer({
-    &#39;id&#39;: &#39;lene_wiese&#39;,
+    &#39;id&#39;: &#39;lene_tauscho&#39;,
     &#39;type&#39;: &#39;fill&#39;,
-    &#39;source&#39;: &#39;lene_wiese&#39;,
+    &#39;source&#39;: &#39;lene_tauscho&#39;,
     &#39;layout&#39;: {},
     &#39;paint&#39;: {
-      &#39;fill-color&#39;: isInside ? &#39;red&#39; : &#39;blue&#39;,
-      &#39;fill-opacity&#39;: 0.5
+      &#39;fill-color&#39;: &#39;blue&#39;,
+      &#39;fill-opacity&#39;: 0.6
     }
   });
 
-  // Add polygon &#39;lene_tischtennis&#39;
-  map.addSource(&#39;lene_tischtennis&#39;, {
-    &#39;type&#39;: &#39;geojson&#39;,
-    &#39;data&#39;: {
-      &#39;type&#39;: &#39;Feature&#39;,
-      &#39;geometry&#39;: {
-        &#39;type&#39;: &#39;Polygon&#39;,
-        &#39;coordinates&#39;: [
-          [
-            [12.4028054, 51.3334371],
-            [12.401998, 51.333593],
-            [12.4020168, 51.3334019],
-            [12.4027169, 51.3332595],
-            [12.4028054, 51.3334371 ]
-          ]
-        ]
-      }
-    }
-  });
   map.addLayer({
     &#39;id&#39;: &#39;lene_tischtennis&#39;,
     &#39;type&#39;: &#39;fill&#39;,
@@ -221,52 +269,10 @@ function renderMap() {
     &#39;layout&#39;: {},
     &#39;paint&#39;: {
       &#39;fill-color&#39;: &#39;blue&#39;,
-      &#39;fill-opacity&#39;: 0.5
+      &#39;fill-opacity&#39;: 0.6
     }
   });
 
-  // Add polygon &#39;wiedebach_spielplatz&#39;
-  map.addSource(&#39;wiedebach_spielplatz&#39;, {
-    &#39;type&#39;: &#39;geojson&#39;,
-    &#39;data&#39;: {
-      &#39;type&#39;: &#39;Feature&#39;,
-      &#39;geometry&#39;: {
-        &#39;type&#39;: &#39;Polygon&#39;,
-        &#39;coordinates&#39;: [
-          [
-            [
-              12.3772895,
-              51.3099782
-            ],
-            [
-              12.3772466,
-              51.3098323
-            ],
-            [
-              12.3773673,
-              51.3097837
-            ],
-            [
-              12.3775953,
-              51.3097904
-            ],
-            [
-              12.3778045,
-              51.3098625
-            ],
-            [
-              12.3777696,
-              51.309995
-            ],
-            [
-              12.3772895,
-              51.3099782
-            ]
-          ]
-        ]
-      }
-    }
-  });
   map.addLayer({
     &#39;id&#39;: &#39;wiedebach_spielplatz&#39;,
     &#39;type&#39;: &#39;fill&#39;,
@@ -274,64 +280,10 @@ function renderMap() {
     &#39;layout&#39;: {},
     &#39;paint&#39;: {
       &#39;fill-color&#39;: &#39;blue&#39;,
-      &#39;fill-opacity&#39;: 0.5
+      &#39;fill-opacity&#39;: 0.6
     }
   });
 
-  // Add polygon &#39;wiedebach_tram&#39;
-  map.addSource(&#39;wiedebach_tram&#39;, {
-    &#39;type&#39;: &#39;geojson&#39;,
-    &#39;data&#39;: {
-      &#39;type&#39;: &#39;Feature&#39;,
-      &#39;geometry&#39;: {
-        &#39;type&#39;: &#39;Polygon&#39;,
-        &#39;coordinates&#39;: [
-          [
-            [
-              12.3787621,
-              51.3101324
-            ],
-            [
-              12.3786816,
-              51.3101291
-            ],
-            [
-              12.3785797,
-              51.3101006
-            ],
-            [
-              12.3784938,
-              51.3100687
-            ],
-            [
-              12.378526,
-              51.3099664
-            ],
-            [
-              12.3786601,
-              51.3099178
-            ],
-            [
-              12.3787916,
-              51.3099413
-            ],
-            [
-              12.378864,
-              51.3099933
-            ],
-            [
-              12.3788452,
-              51.310062
-            ],
-            [
-              12.3787621,
-              51.3101324
-            ]
-          ]
-        ]
-      }
-    }
-  });
   map.addLayer({
     &#39;id&#39;: &#39;wiedebach_tram&#39;,
     &#39;type&#39;: &#39;fill&#39;,
@@ -339,7 +291,7 @@ function renderMap() {
     &#39;layout&#39;: {},
     &#39;paint&#39;: {
       &#39;fill-color&#39;: &#39;blue&#39;,
-      &#39;fill-opacity&#39;: 0.5
+      &#39;fill-opacity&#39;: 0.6
     }
   });
 }
