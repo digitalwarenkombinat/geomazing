@@ -56,28 +56,32 @@ const fenceA = new CircularGeofenceRegion({
   id: 'lene_tauscho',
   latitude: 51.3331807,
   longitude: 12.4043691,
-  radius: 10 // meters
+  radius: 10, // meters
+  alreadyEntered: false
 });
 
 const fenceB = new CircularGeofenceRegion({
   id: 'lene_tischtennis',
   latitude: 51.3334271,
   longitude: 12.4023682,
-  radius: 10 // meters
+  radius: 10, // meters
+  alreadyEntered: false
 });
 
 const fenceC = new CircularGeofenceRegion({
   id: 'wiedebach_spielplatz',
   latitude: 51.3098843,
   longitude: 12.3776221,
-  radius: 10 // meters
+  radius: 10, // meters
+  alreadyEntered: false
 });
 
 const fenceD = new CircularGeofenceRegion({
   id: 'wiedebach_tram',
   latitude: 51.3099849,
   longitude: 12.3787808,
-  radius: 10 // meters
+  radius: 10, // meters
+  alreadyEntered: false
 });
 
 const fences = [fenceA, fenceB, fenceC, fenceD]
@@ -114,6 +118,25 @@ geolocate.on('geolocate', ({coords}) => {
   for (const fence of fences) {
     if (fence.inside(lat, lon)) {
       map.setPaintProperty(fence.id, 'fill-color', 'red');
+      fence.alreadyEntered = true;
+
+      map.on('click', fence.id, (e) => {
+        // Copy coordinates array.
+        const coordinates = [fence.longitude, fence.latitude];
+        const description = 'test';
+
+        // [[Punkt|Lene_Tischtennis]]
+         
+        new mapboxgl.Popup()
+        .setLngLat(coordinates)
+        .setHTML(description)
+        .addTo(map);
+        });
+
+
+
+    } else {
+      map.setPaintProperty(fence.id, 'fill-color', 'blue');
     }
   }
 });
