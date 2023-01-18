@@ -35,61 +35,66 @@ var createGeoJSONCircle = function(center, radius) {
   };
 };
 
-class CircularGeofenceRegion {
-  constructor(opts) {
-    Object.assign(this, opts)
-  }
 
-  inside(lat2, lon2) {
-    const lat1 = this.latitude
-    const lon1 = this.longitude
-    const R = 63710; // Earth's radius in m
-    console.log(lat1, lat2, lon1, lon2)
+var fences;
+
+if(typeof fences === 'undefined'){
+  class CircularGeofenceRegion {
+    constructor(opts) {
+      Object.assign(this, opts)
+    }
   
-    return Math.acos(Math.sin(lat1)*Math.sin(lat2) + 
-                     Math.cos(lat1)*Math.cos(lat2) *
-                     Math.cos(lon2-lon1)) * R < this.radius;
+    inside(lat2, lon2) {
+      const lat1 = this.latitude
+      const lon1 = this.longitude
+      const R = 63710; // Earth's radius in m
+      console.log(lat1, lat2, lon1, lon2)
+  
+      return Math.acos(Math.sin(lat1)*Math.sin(lat2) + 
+                       Math.cos(lat1)*Math.cos(lat2) *
+                       Math.cos(lon2-lon1)) * R < this.radius;
+    }
   }
+
+  const fenceA = new CircularGeofenceRegion({
+    id: 'lene_tauscho',
+    latitude: 51.3331807,
+    longitude: 12.4043691,
+    radius: 10, // meters
+    alreadyEntered: false
+  });
+
+  const fenceB = new CircularGeofenceRegion({
+    id: 'lene_tischtennis',
+    latitude: 51.3334271,
+    longitude: 12.4023682,
+    radius: 10, // meters
+    alreadyEntered: false
+  });
+
+  const fenceC = new CircularGeofenceRegion({
+    id: 'wiedebach_spielplatz',
+    latitude: 51.3098843,
+    longitude: 12.3776221,
+    radius: 10, // meters
+    alreadyEntered: false
+  });
+
+  const fenceD = new CircularGeofenceRegion({
+    id: 'wiedebach_tram',
+    latitude: 51.3099849,
+    longitude: 12.3787808,
+    radius: 10, // meters
+    alreadyEntered: false
+  });
+
+  fences = [fenceA, fenceB, fenceC, fenceD]
 }
-
-const fenceA = new CircularGeofenceRegion({
-  id: 'lene_tauscho',
-  latitude: 51.3331807,
-  longitude: 12.4043691,
-  radius: 10, // meters
-  alreadyEntered: false
-});
-
-const fenceB = new CircularGeofenceRegion({
-  id: 'lene_tischtennis',
-  latitude: 51.3334271,
-  longitude: 12.4023682,
-  radius: 10, // meters
-  alreadyEntered: false
-});
-
-const fenceC = new CircularGeofenceRegion({
-  id: 'wiedebach_spielplatz',
-  latitude: 51.3098843,
-  longitude: 12.3776221,
-  radius: 10, // meters
-  alreadyEntered: false
-});
-
-const fenceD = new CircularGeofenceRegion({
-  id: 'wiedebach_tram',
-  latitude: 51.3099849,
-  longitude: 12.3787808,
-  radius: 10, // meters
-  alreadyEntered: false
-});
-
-const fences = [fenceA, fenceB, fenceC, fenceD]
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ2VyZGVzcXVlIiwiYSI6ImNsNnowcWg1eDAwZmQzY211cTYyZ2FsaHYifQ.gOYM4cFcp8rcqUCwsgsjug';
 
 // Create new Mapbox
-const map = new mapboxgl.Map({
+var map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/gerdesque/clckluor2000l14lbev40r74r',
 });
@@ -98,7 +103,7 @@ const map = new mapboxgl.Map({
 // map.addControl(new mapboxgl.FullscreenControl());
 
 // Add geolocate control
-const geolocate = new mapboxgl.GeolocateControl({
+var geolocate = new mapboxgl.GeolocateControl({
     positionOptions: {
     enableHighAccuracy: true
   },
@@ -147,9 +152,9 @@ function renderMap() {
   // Resize map on load
   map.resize();
 
-  for (const fence of fences) {
+for (const fence of fences) {
     map.addSource(fence.id, createGeoJSONCircle([fence.longitude, fence.latitude], fence.radius/1000));
-  }
+ }
   
   map.addLayer({
     'id': 'lene_tauscho',
