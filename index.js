@@ -121,19 +121,17 @@ geolocate.on('geolocate', ({coords}) => {
       fence.alreadyEntered = true;
 
       map.on('click', fence.id, (e) => {
-        // Copy coordinates array.
-        const coordinates = [fence.longitude, fence.latitude];
-        const description = 'test';
-
-        // [[Punkt|Lene_Tischtennis]]
-         
-        new mapboxgl.Popup()
-        .setLngLat(coordinates)
-        .setHTML(description)
-        .addTo(map);
-        });
-
-
+        switch (fence.id) {
+          case 'lene_tauscho':
+            $.wiki('<<goto "lene_tauscho">>')
+            break;
+          case 'lene_tischtennis':
+            $.wiki('<<goto "lene_tischtennis">>')
+            break;
+          default:
+            console.log(`${fence.id} not found`);
+        }
+      });
 
     } else {
       map.setPaintProperty(fence.id, 'fill-color', 'blue');
@@ -149,11 +147,9 @@ function renderMap() {
   // Resize map on load
   map.resize();
 
-  map.addSource(fenceA.id, createGeoJSONCircle([fenceA.longitude, fenceA.latitude], fenceA.radius/1000));
-  map.addSource(fenceB.id, createGeoJSONCircle([fenceB.longitude, fenceB.latitude], fenceB.radius/1000));
-  map.addSource(fenceC.id, createGeoJSONCircle([fenceC.longitude, fenceC.latitude], fenceC.radius/1000));
-  map.addSource(fenceD.id, createGeoJSONCircle([fenceD.longitude, fenceD.latitude], fenceD.radius/1000));
-  
+  for (const fence of fences) {
+    map.addSource(fence.id, createGeoJSONCircle([fence.longitude, fence.latitude], fence.radius/1000));
+  }
   
   map.addLayer({
     'id': 'lene_tauscho',
