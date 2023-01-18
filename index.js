@@ -133,6 +133,12 @@ geolocate.on('geolocate', ({coords}) => {
           case 'lene_tischtennis':
             $.wiki('<<goto "lene_tischtennis">>')
             break;
+          case 'wiedebach_spielplatz':
+            $.wiki('<<goto "wiedebach_spielplatz">>')
+            break;
+          case 'wiedebach_tram':
+            $.wiki('<<goto "wiedebach_tram">>')
+            break;
           default:
             console.log(`${fence.id} not found`);
         }
