@@ -167,69 +167,84 @@ setup.storyinit = function () {
 
     const fences = [fenceA, fenceB, fenceC, fenceD]
     return fences;
-};</script><tw-passagedata pid="1" name="Intro" tags="" position="1000,600" size="100,100">[[Starte das Abenteuer|Map]]
-</tw-passagedata><tw-passagedata pid="2" name="Map" tags="" position="1200,600" size="100,100">&lt;div id=&quot;map&quot;&gt;&lt;/div&gt;
-&lt;&lt;script&gt;&gt;
-$(document).one(&quot;:passagedisplay&quot;, function(event) {
-  var createGeoJSONCircle = function(center, radius) {
-    const points = 64;
-    const coords = {
-      latitude: center[1],
-      longitude: center[0]
-    };
+};
 
-    let ret = [];
-    const distanceX = radius / (111.320 * Math.cos(coords.latitude * Math.PI / 180));
-    const distanceY = radius / 110.574;
+(function () {
+  
+  window.geolocation = {
 
-    var theta, x, y;
-    for (var i = 0; i &lt; points; i++) {
-      theta = (i / points) * (2 * Math.PI);
-      x = distanceX * Math.cos(theta);
-      y = distanceY * Math.sin(theta);
-
-      ret.push([coords.longitude + x, coords.latitude + y]);
-    }
-    ret.push(ret[0]);
-
-    return {
-      &quot;type&quot;: &quot;geojson&quot;,
-      &quot;data&quot;: {
-        &quot;type&quot;: &quot;FeatureCollection&quot;,
-        &quot;features&quot;: [{
-          &quot;type&quot;: &quot;Feature&quot;,
-          &quot;geometry&quot;: {
-            &quot;type&quot;: &quot;Polygon&quot;,
-            &quot;coordinates&quot;: [ret]
-          }
-        }]
+    getGeolocateControl: function() {
+      return {
+          positionOptions: {
+          enableHighAccuracy: true
+        },
+        trackUserLocation: true,
+        showUserHeading: true
       }
-    };
+    },
+    
+    createGeoJSONCircle: function(center, radius) {
+      const points = 64;
+      const coords = {
+        latitude: center[1],
+        longitude: center[0]
+      };
+  
+      let ret = [];
+      const distanceX = radius / (111.320 * Math.cos(coords.latitude * Math.PI / 180));
+      const distanceY = radius / 110.574;
+  
+      var theta, x, y;
+      for (var i = 0; i < points; i++) {
+        theta = (i / points) * (2 * Math.PI);
+        x = distanceX * Math.cos(theta);
+        y = distanceY * Math.sin(theta);
+  
+        ret.push([coords.longitude + x, coords.latitude + y]);
+      }
+      ret.push(ret[0]);
+  
+      return {
+        "type": "geojson",
+        "data": {
+          "type": "FeatureCollection",
+          "features": [{
+            "type": "Feature",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [ret]
+            }
+          }]
+        }
+      };
+    }
+
   };
 
+}());</script><tw-passagedata pid="1" name="Intro" tags="" position="1000,600" size="100,100">[[Starte das Abenteuer|Map]]
+</tw-passagedata><tw-passagedata pid="2" name="Map" tags="" position="1200,600" size="100,100">&lt;div id=&quot;map&quot;&gt;&lt;/div&gt;
+
+&lt;&lt;script&gt;&gt;
+$(document).one(&quot;:passagedisplay&quot;, function(event) {
+  
   mapboxgl.accessToken = State.variables.accessToken
 
   var map = new mapboxgl.Map({
     container: &#39;map&#39;,
-    style: &#39;mapbox://styles/gerdesque/clckluor2000l14lbev40r74r&#39;,
+    style: State.variables.style,
   });
 
-  var geolocate = new mapboxgl.GeolocateControl({
-    positionOptions: {
-      enableHighAccuracy: true
-    },
-    trackUserLocation: true,
-    showUserHeading: true
-  })
+  var geolocate = new mapboxgl.GeolocateControl(window.geolocation.getGeolocateControl());
 
   map.addControl(geolocate);
-
+    
   var remainingFences = State.variables.fences.filter(f =&gt; f.alreadyEntered === false)
 
   geolocate.on(&#39;geolocate&#39;, ({ coords }) =&gt; {
     const lat = coords.latitude
     const lon = coords.longitude
-
+	// console.log(`Koordinaten : ${lat}; ${lon}`);
+    
     for (const fence of remainingFences) {
       if (fence.inside(lat, lon)) {
         map.setPaintProperty(fence.id, &#39;fill-color&#39;, &#39;red&#39;);
@@ -249,6 +264,66 @@ $(document).one(&quot;:passagedisplay&quot;, function(event) {
             case &#39;wiedebach_tram&#39;:
               $.wiki(&#39;&lt;&lt;goto &quot;wiedebach_tram&quot;&gt;&gt;&#39;)
               break;
+            case &#39;johannistorturm&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;1.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;marsfeld&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;2.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;grauer_hof&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;3.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;markt&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;4.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;holzmarkt&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;5.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;halken&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;6.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;rabenturm&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;7.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;ozelot&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;8.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;pferd&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;9.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;schildkröte&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;10.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;schlange&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;11.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;schwein&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;12.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;truthahn&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;13.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;zebra&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;14.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;affe&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;15.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;eule&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;16.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;gazelle&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;17.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;katze&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;18.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;krokodil&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;19.1&quot;&gt;&gt;&#39;)
+              break;
+            case &#39;lama&#39;:
+              $.wiki(&#39;&lt;&lt;goto &quot;20.1&quot;&gt;&gt;&#39;)
+              break;            
             default:
               console.log(`${fence.id} not found`);
           }
@@ -262,13 +337,15 @@ $(document).one(&quot;:passagedisplay&quot;, function(event) {
 
   map.on(&#39;load&#39;, () =&gt; {
     renderMap();
+    console.log($(&quot;.mapboxgl-ctrl-geolocate&quot;))
+	$(&quot;.mapboxgl-ctrl-geolocate&quot;).click()
   })
 
   function renderMap() {
     map.resize();
 
     for (const fence of remainingFences) {
-      map.addSource(fence.id, createGeoJSONCircle([fence.longitude, fence.latitude], fence.radius / 1000));
+      map.addSource(fence.id, window.geolocation.createGeoJSONCircle([fence.longitude, fence.latitude], fence.radius / 1000));
 
       map.addLayer({
         &#39;id&#39;: fence.id,
@@ -282,17 +359,18 @@ $(document).one(&quot;:passagedisplay&quot;, function(event) {
       });
     }
 
-  }
+  }  	
 });
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="3" name="lene_tauscho" tags="" position="1000,800" size="100,100">Lene Tauscho
 &lt;&lt;button &quot;Zurück&quot;&gt;&gt;
   &lt;&lt;goto &quot;Map&quot;&gt;&gt;
-&lt;&lt;/button&gt;&gt;	</tw-passagedata><tw-passagedata pid="4" name="lene_tischtennis" tags="" position="1200,800" size="100,100">Lene Tischtennis
+&lt;&lt;/button&gt;&gt;</tw-passagedata><tw-passagedata pid="4" name="lene_tischtennis" tags="" position="1200,800" size="100,100">Lene Tischtennis
 &lt;&lt;button &quot;Zurück&quot;&gt;&gt;
   &lt;&lt;goto &quot;Map&quot;&gt;&gt;
 &lt;&lt;/button&gt;&gt;	</tw-passagedata><tw-passagedata pid="5" name="StoryInit" tags="" position="1000,400" size="100,100">&lt;&lt;nobr&gt;&gt;
 &lt;&lt;set $fences to setup.storyinit()&gt;&gt;
 &lt;&lt;set $accessToken to &#39;pk.eyJ1IjoiZ2VyZGVzcXVlIiwiYSI6ImNsNnowcWg1eDAwZmQzY211cTYyZ2FsaHYifQ.gOYM4cFcp8rcqUCwsgsjug&#39;&gt;&gt;
+&lt;&lt;set $style to &#39;mapbox://styles/gerdesque/clckluor2000l14lbev40r74r&#39;&gt;&gt;
 &lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="6" name="wiedebach_spielplatz" tags="" position="1400,800" size="100,100">Wiedebach Spielplatz
 
 &lt;&lt;button &quot;Zurück&quot;&gt;&gt;

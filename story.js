@@ -69,6 +69,16 @@ setup.storyinit = function () {
   
   window.geolocation = {
 
+    getGeolocateControl: function() {
+      return {
+          positionOptions: {
+          enableHighAccuracy: true
+        },
+        trackUserLocation: true,
+        showUserHeading: true
+      }
+    },
+    
     createGeoJSONCircle: function(center, radius) {
       const points = 64;
       const coords = {
