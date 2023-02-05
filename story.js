@@ -1,30 +1,9 @@
-setup.JSLoaded = false;
-var lockID = LoadScreen.lock();
 importStyles("https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css");
-importScripts("https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js")
-	.then(function() {
-		setup.JSLoaded = true;
-		Engine.play(passage(), true);
-		LoadScreen.unlock(lockID);
-	}).catch(function(error) {
-		alert(error);
-	}
-);
+setup.mapboxLoaded = importScripts("https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js")
 
 class CircularGeofenceRegion {
   constructor(opts) {
     Object.assign(this, opts)
-  }
-
-  inside(lat2, lon2) {
-    const lat1 = this.latitude
-    const lon1 = this.longitude
-    const R = 63710; // Earth's radius in m
-    // console.log(lat1, lat2, lon1, lon2)
-  
-    return Math.acos(Math.sin(lat1)*Math.sin(lat2) + 
-                     Math.cos(lat1)*Math.cos(lat2) *
-                     Math.cos(lon2-lon1)) * R < this.radius;
   }
 }
 
@@ -33,7 +12,7 @@ setup.storyinit = function () {
       id: 'lene_tauscho',
       latitude: 51.3331807,
       longitude: 12.4043691,
-      radius: 10000, // meters
+      radius: 10, // meters
       alreadyEntered: false
     });
 
@@ -78,6 +57,13 @@ setup.storyinit = function () {
         showUserHeading: true
       }
     },
+    
+    inside: function(lat1, lon1, radius, lat2, lon2) {
+  		const R = 63710; // Earth's radius in m
+  		return Math.acos(Math.sin(lat1)*Math.sin(lat2) + 
+                         Math.cos(lat1)*Math.cos(lat2) *
+                         Math.cos(lon2-lon1)) * R < radius;
+	},
     
     createGeoJSONCircle: function(center, radius) {
       const points = 64;
