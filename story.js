@@ -59,10 +59,16 @@ setup.storyinit = function () {
     },
     
     inside: function(lat1, lon1, radius, lat2, lon2) {
-  		const R = 63710; // Earth's radius in m
-  		return Math.acos(Math.sin(lat1)*Math.sin(lat2) + 
-                         Math.cos(lat1)*Math.cos(lat2) *
-                         Math.cos(lon2-lon1)) * R < radius;
+      const R = 6371; // Earth's radius in km
+      const dLat = (lat2-lat1) * Math.PI / 180;
+      const dLon = (lon2-lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180 ) * Math.cos(lat2 * Math.PI / 180 ) *
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      const distance = R * c * 1000;
+      // console.log(distance)
+      return distance < radius;
 	},
     
     createGeoJSONCircle: function(center, radius) {
