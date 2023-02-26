@@ -21,7 +21,7 @@ $(document).one(":passagedisplay", function() {
       for (const fence of remainingFences) {
         if (window.geolocation.inside(fence.latitude,fence.longitude,fence.radius,lat, lon)) {
           map.setPaintProperty(fence.id, 'fill-color', 'red');
-  
+          
           map.on('click', fence.id, (e) => {
             State.variables.fences.find(f => f.id === fence.id).alreadyEntered = true;          
             switch (fence.id) {
@@ -110,8 +110,8 @@ $(document).one(":passagedisplay", function() {
   
     map.on('load', () => {
       renderMap();
-    // console.log($(".mapboxgl-ctrl-geolocate"));
-	  $(".mapboxgl-ctrl-geolocate").click();
+      // console.log($(".mapboxgl-ctrl-geolocate"));
+	    $(".mapboxgl-ctrl-geolocate").click();
     })
   
     function renderMap() {
@@ -130,6 +130,18 @@ $(document).one(":passagedisplay", function() {
             'fill-opacity': 0.6
           }
         });
+
+        map.addLayer({
+          'id': fence.id+'label',
+          'type': 'symbol',
+          'source': fence.id,
+          'layout': {'text-field': fence.id},
+        });
+        
+        new mapboxgl.Popup({closeOnClick: false, className: 'popup'})
+            .setLngLat([fence.longitude, fence.latitude])
+            .setHTML("<h1>"+fence.id+"</h1>")
+            .addTo(map);
       }
   
     } 
