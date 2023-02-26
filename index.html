@@ -103,7 +103,8 @@ var LZString={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234
 #story { margin: 0; margin-left: 20em; }
 #passages { max-width: 100vw; }
 #map { height: 100vh; height: 100dvh }
-.mapboxgl-ctrl-group button.mapboxgl-ctrl-geolocate { display: none }</style><script role="script" id="twine-user-script" type="text/twine-javascript">importStyles("https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css");
+.mapboxgl-ctrl-group button.mapboxgl-ctrl-geolocate { display: none }
+.popup {color: black}</style><script role="script" id="twine-user-script" type="text/twine-javascript">importStyles("https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css");
 setup.mapboxLoaded = importScripts("https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js")
 
 class CircularGeofenceRegion {
@@ -112,41 +113,46 @@ class CircularGeofenceRegion {
   }
 }
 
-setup.storyinit = function () {
-    const fenceA = new CircularGeofenceRegion({
-      id: 'lene_tauscho',
-      latitude: 51.3331807,
-      longitude: 12.4043691,
-      radius: 10, // meters
-      alreadyEntered: false
-    });
+const fenceA = new CircularGeofenceRegion({
+  id: 'lene_tauscho',
+  latitude: 51.3331807,
+  longitude: 12.4043691,
+  radius: 10, // meters
+  alreadyEntered: false
+});
 
-    const fenceB = new CircularGeofenceRegion({
-      id: 'lene_tischtennis',
-      latitude: 51.3334271,
-      longitude: 12.4023682,
-      radius: 10, // meters
-      alreadyEntered: false
-    });
+const fenceB = new CircularGeofenceRegion({
+  id: 'lene_tischtennis',
+  latitude: 51.3334271,
+  longitude: 12.4023682,
+  radius: 10, // meters
+  alreadyEntered: false
+});
 
-    const fenceC = new CircularGeofenceRegion({
-      id: 'wiedebach_spielplatz',
-      latitude: 51.3098843,
-      longitude: 12.3776221,
-      radius: 10, // meters
-      alreadyEntered: false
-    });
+const fenceC = new CircularGeofenceRegion({
+  id: 'wiedebach_spielplatz',
+  latitude: 51.3098843,
+  longitude: 12.3776221,
+  radius: 10, // meters
+  alreadyEntered: false
+});
 
-    const fenceD = new CircularGeofenceRegion({
-      id: 'wiedebach_tram',
-      latitude: 51.3099849,
-      longitude: 12.3787808,
-      radius: 10, // meters
-      alreadyEntered: false
-    });
+const fenceD = new CircularGeofenceRegion({
+  id: 'wiedebach_tram',
+  latitude: 51.3099849,
+  longitude: 12.3787808,
+  radius: 10, // meters
+  alreadyEntered: false
+});
 
-    const fences = [fenceA, fenceB, fenceC, fenceD]
-    return fences;
+const fences = [fenceA, fenceB, fenceC, fenceD]
+
+setup.getFences = function () {
+  return fences;
+};
+
+setup.getDisplayedFences = function (displayFences) {
+  return fences.filter(f => displayFences.some(df => f.id === df));
 };
 
 (function () {
@@ -172,7 +178,6 @@ setup.storyinit = function () {
       Math.sin(dLon/2) * Math.sin(dLon/2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
       const distance = R * c * 1000;
-      // console.log(distance)
       return distance < radius;
 	},
     
@@ -241,7 +246,7 @@ $(document).one(&quot;:passagedisplay&quot;, function() {
       for (const fence of remainingFences) {
         if (window.geolocation.inside(fence.latitude,fence.longitude,fence.radius,lat, lon)) {
           map.setPaintProperty(fence.id, &#39;fill-color&#39;, &#39;red&#39;);
-  
+          
           map.on(&#39;click&#39;, fence.id, (e) =&gt; {
             State.variables.fences.find(f =&gt; f.id === fence.id).alreadyEntered = true;          
             switch (fence.id) {
@@ -330,8 +335,8 @@ $(document).one(&quot;:passagedisplay&quot;, function() {
   
     map.on(&#39;load&#39;, () =&gt; {
       renderMap();
-    // console.log($(&quot;.mapboxgl-ctrl-geolocate&quot;));
-	  $(&quot;.mapboxgl-ctrl-geolocate&quot;).click();
+      // console.log($(&quot;.mapboxgl-ctrl-geolocate&quot;));
+	    $(&quot;.mapboxgl-ctrl-geolocate&quot;).click();
     })
   
     function renderMap() {
@@ -350,23 +355,40 @@ $(document).one(&quot;:passagedisplay&quot;, function() {
             &#39;fill-opacity&#39;: 0.6
           }
         });
+
+        map.addLayer({
+          &#39;id&#39;: fence.id+&#39;label&#39;,
+          &#39;type&#39;: &#39;symbol&#39;,
+          &#39;source&#39;: fence.id,
+          &#39;layout&#39;: {&#39;text-field&#39;: fence.id},
+        });
+        
+        new mapboxgl.Popup({closeOnClick: false, className: &#39;popup&#39;})
+            .setLngLat([fence.longitude, fence.latitude])
+            .setHTML(&quot;&lt;h1&gt;&quot;+fence.id+&quot;&lt;/h1&gt;&quot;)
+            .addTo(map);
       }
   
     } 
    })
   });
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="3" name="lene_tauscho" tags="" position="1000,800" size="100,100">Lene Tauscho
-&lt;&lt;button &quot;Zurück&quot;&gt;&gt;
+&lt;&lt;nobr&gt;&gt;
+&lt;&lt;set $fences to setup.getDisplayedFences([&#39;wiedebach_spielplatz&#39;, &#39;wiedebach_tram&#39;])&gt;&gt;
+&lt;&lt;/nobr&gt;&gt;
+&lt;&lt;button &quot;Folge den Hinweisen auf der Karte&quot;&gt;&gt;
   &lt;&lt;goto &quot;Map&quot;&gt;&gt;
 &lt;&lt;/button&gt;&gt;</tw-passagedata><tw-passagedata pid="4" name="lene_tischtennis" tags="" position="1200,800" size="100,100">Lene Tischtennis
 &lt;&lt;button &quot;Zurück&quot;&gt;&gt;
   &lt;&lt;goto &quot;Map&quot;&gt;&gt;
 &lt;&lt;/button&gt;&gt;	</tw-passagedata><tw-passagedata pid="5" name="StoryInit" tags="" position="1000,400" size="100,100">&lt;&lt;nobr&gt;&gt;
-&lt;&lt;set $fences to setup.storyinit()&gt;&gt;
+&lt;&lt;set $fences to setup.getFences()&gt;&gt;
 &lt;&lt;set $accessToken to &#39;pk.eyJ1IjoiZ2VyZGVzcXVlIiwiYSI6ImNsNnowcWg1eDAwZmQzY211cTYyZ2FsaHYifQ.gOYM4cFcp8rcqUCwsgsjug&#39;&gt;&gt;
 &lt;&lt;set $style to &#39;mapbox://styles/gerdesque/clckluor2000l14lbev40r74r&#39;&gt;&gt;
 &lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="6" name="wiedebach_spielplatz" tags="" position="1400,800" size="100,100">Wiedebach Spielplatz
-
+&lt;&lt;nobr&gt;&gt;
+&lt;&lt;set $fences to setup.getDisplayedFences([&#39;wiedebach_tram&#39;])&gt;&gt;
+&lt;&lt;/nobr&gt;&gt;
 &lt;&lt;button &quot;Zurück&quot;&gt;&gt;
   &lt;&lt;goto &quot;Map&quot;&gt;&gt;
 &lt;&lt;/button&gt;&gt;	</tw-passagedata><tw-passagedata pid="7" name="wiedebach_tram" tags="" position="1600,800" size="100,100">Wiedebach Tram
