@@ -7,41 +7,46 @@ class CircularGeofenceRegion {
   }
 }
 
-setup.storyinit = function () {
-    const fenceA = new CircularGeofenceRegion({
-      id: 'lene_tauscho',
-      latitude: 51.3331807,
-      longitude: 12.4043691,
-      radius: 10, // meters
-      alreadyEntered: false
-    });
+const fenceA = new CircularGeofenceRegion({
+  id: 'lene_tauscho',
+  latitude: 51.3331807,
+  longitude: 12.4043691,
+  radius: 10, // meters
+  alreadyEntered: false
+});
 
-    const fenceB = new CircularGeofenceRegion({
-      id: 'lene_tischtennis',
-      latitude: 51.3334271,
-      longitude: 12.4023682,
-      radius: 10, // meters
-      alreadyEntered: false
-    });
+const fenceB = new CircularGeofenceRegion({
+  id: 'lene_tischtennis',
+  latitude: 51.3334271,
+  longitude: 12.4023682,
+  radius: 10, // meters
+  alreadyEntered: false
+});
 
-    const fenceC = new CircularGeofenceRegion({
-      id: 'wiedebach_spielplatz',
-      latitude: 51.3098843,
-      longitude: 12.3776221,
-      radius: 10, // meters
-      alreadyEntered: false
-    });
+const fenceC = new CircularGeofenceRegion({
+  id: 'wiedebach_spielplatz',
+  latitude: 51.3098843,
+  longitude: 12.3776221,
+  radius: 10, // meters
+  alreadyEntered: false
+});
 
-    const fenceD = new CircularGeofenceRegion({
-      id: 'wiedebach_tram',
-      latitude: 51.3099849,
-      longitude: 12.3787808,
-      radius: 10, // meters
-      alreadyEntered: false
-    });
+const fenceD = new CircularGeofenceRegion({
+  id: 'wiedebach_tram',
+  latitude: 51.3099849,
+  longitude: 12.3787808,
+  radius: 10, // meters
+  alreadyEntered: false
+});
 
-    const fences = [fenceA, fenceB, fenceC, fenceD]
-    return fences;
+const fences = [fenceA, fenceB, fenceC, fenceD]
+
+setup.getFences = function () {
+  return fences;
+};
+
+setup.getDisplayedFences = function (displayFences) {
+  return fences.filter(f => displayFences.some(df => f.id === df));
 };
 
 (function () {
