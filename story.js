@@ -11,6 +11,7 @@ const fenceA = new CircularGeofenceRegion({
   id: 'lene_tauscho',
   latitude: 51.3331807,
   longitude: 12.4043691,
+  description: 'Hier steht Lenes Tauscho.',
   radius: 10, // meters
   alreadyEntered: false
 });
@@ -19,6 +20,7 @@ const fenceB = new CircularGeofenceRegion({
   id: 'lene_tischtennis',
   latitude: 51.3334271,
   longitude: 12.4023682,
+  description: 'Hier befindet sich eine Platte zum Tischtennis.',
   radius: 10, // meters
   alreadyEntered: false
 });
@@ -27,6 +29,7 @@ const fenceC = new CircularGeofenceRegion({
   id: 'wiedebach_spielplatz',
   latitude: 51.3098843,
   longitude: 12.3776221,
+  description: 'Ein Spielplatz am Wiedebachplatz.',
   radius: 10, // meters
   alreadyEntered: false
 });
@@ -35,6 +38,7 @@ const fenceD = new CircularGeofenceRegion({
   id: 'wiedebach_tram',
   latitude: 51.3099849,
   longitude: 12.3787808,
+  description: 'An dieser Stelle hält die Tram.',
   radius: 10, // meters
   alreadyEntered: false
 });

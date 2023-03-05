@@ -131,17 +131,10 @@ $(document).one(":passagedisplay", function() {
           }
         });
 
-        map.addLayer({
-          'id': fence.id+'label',
-          'type': 'symbol',
-          'source': fence.id,
-          'layout': {'text-field': fence.id},
-        });
-        
-        new mapboxgl.Popup({closeOnClick: false, className: 'popup'})
-            .setLngLat([fence.longitude, fence.latitude])
-            .setHTML("<h1>"+fence.id+"</h1>")
-            .addTo(map);
+        new mapboxgl.Popup({closeOnClick: false, className: 'popup', offset: [0, -50]})
+        .setLngLat([fence.longitude, fence.latitude])
+        .setHTML("<h1>"+fence.description+"</h1>")
+        .addTo(map);
       }
   
     } 
