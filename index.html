@@ -113,6 +113,7 @@ var LZString={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234
     font-family: 'DPDorkDiary', cursive;
     text-align: center;
     border-bottom-right-radius:60px 5px;
+  	hyphens: auto;
 }
     
 .popup .mapboxgl-popup-content::before {
@@ -160,7 +161,7 @@ const fenceB = new CircularGeofenceRegion({
   id: 'lene_tischtennis',
   latitude: 51.3334271,
   longitude: 12.4023682,
-  description: 'Hier befindet sich eine Platte zum Tischtennis.',
+  description: 'Hier befindet sich eine Tischtennisplatte.',
   radius: 10, // meters
   alreadyEntered: false
 });
@@ -377,6 +378,14 @@ $(document).one(&quot;:passagedisplay&quot;, function() {
 	    $(&quot;.mapboxgl-ctrl-geolocate&quot;).click();
     })
   
+    map.on(&#39;zoomend&#39;, () =&gt; { 
+      let zoom = map.getZoom().toFixed();
+      // Zoomstufe in Pixel wird als Größe der H1-Überschrift gesetzt 
+      $(&#39;.mapboxgl-popup-content h1&#39;).css(&#39;font-size&#39;, zoom+&#39;px&#39;)
+      // Ab Zoomstufe kleiner 18 wird das Padding der Box entfernt um Platz zu sparen
+      zoom &lt; 18 ? $(&#39;.mapboxgl-popup-content&#39;).css(&#39;padding&#39;,0) : $(&#39;.mapboxgl-popup-content&#39;).css(&#39;padding&#39;, &#39;10px 10px 15px&#39;)
+    })
+  
     function renderMap() {
       map.resize();
   
@@ -393,14 +402,14 @@ $(document).one(&quot;:passagedisplay&quot;, function() {
             &#39;fill-opacity&#39;: 0.6
           }
         });
-
-        new mapboxgl.Popup({closeOnClick: false, className: &#39;popup&#39;, offset: [0, -50]})
-            .setLngLat([fence.longitude, fence.latitude])
-            .setHTML(&quot;&lt;h1&gt;&quot;+fence.description+&quot;&lt;/h1&gt;&quot;)
-            .addTo(map);
+        
+        new mapboxgl.Popup({closeButton: false, closeOnClick: false, className: &#39;popup&#39;, offset: [0, -50]})
+        .setLngLat([fence.longitude, fence.latitude])
+        .setHTML(&quot;&lt;h1&gt;&quot;+fence.description+&quot;&lt;/h1&gt;&quot;)
+        .addTo(map);
       }
-  
-    } 
+    }
+    
    })
   });
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="3" name="lene_tauscho" tags="" position="1000,800" size="100,100">Lene Tauscho
