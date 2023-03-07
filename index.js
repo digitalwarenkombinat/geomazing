@@ -113,6 +113,14 @@ $(document).one(":passagedisplay", function() {
       // console.log($(".mapboxgl-ctrl-geolocate"));
 	    $(".mapboxgl-ctrl-geolocate").click();
     })
+
+    map.on('zoomend', () => { 
+      let zoom = map.getZoom().toFixed();
+      // Zoomstufe in Pixel wird als Größe der H1-Überschrift gesetzt 
+      $('.mapboxgl-popup-content h1').css('font-size', zoom+'px')
+      // Ab Zoomstufe kleiner 18 wird das Padding der Box entfernt um Platz zu sparen
+      zoom < 18 ? $('.mapboxgl-popup-content').css('padding',0) : $('.mapboxgl-popup-content').css('padding', '10px 10px 15px')
+    })
   
     function renderMap() {
       map.resize();
@@ -131,12 +139,12 @@ $(document).one(":passagedisplay", function() {
           }
         });
 
-        new mapboxgl.Popup({closeOnClick: false, className: 'popup', offset: [0, -50]})
+        new mapboxgl.Popup({closeButton: false, closeOnClick: false, className: 'popup', offset: [0, -50]})
         .setLngLat([fence.longitude, fence.latitude])
         .setHTML("<h1>"+fence.description+"</h1>")
         .addTo(map);
       }
-  
-    } 
+    }
+
    })
   });
