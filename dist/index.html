@@ -384,7 +384,13 @@ $(document).one(&quot;:passagedisplay&quot;, function() {
       // Zoomstufe in Pixel wird als Größe der H1-Überschrift gesetzt 
       $(&#39;.mapboxgl-popup-content h1&#39;).css(&#39;font-size&#39;, zoom+&#39;px&#39;)
       // Ab Zoomstufe kleiner 14 werden die Boxen ausgeblendet
-      zoom &lt; 14 ? $(&#39;.mapboxgl-popup-content&#39;).css(&#39;display&#39;,&#39;none&#39;) : $(&#39;.mapboxgl-popup-content&#39;).css(&#39;display&#39;, &#39;block&#39;)
+      if (zoom &lt; 14){
+      	$(&#39;.mapboxgl-popup-content&#39;).css(&#39;display&#39;,&#39;none&#39;)
+        $(&#39;.mapboxgl-popup-tip&#39;).css(&#39;display&#39;,&#39;none&#39;)
+      } else {
+      	$(&#39;.mapboxgl-popup-content&#39;).css(&#39;display&#39;, &#39;block&#39;)
+        $(&#39;.mapboxgl-popup-tip&#39;).css(&#39;display&#39;, &#39;block&#39;)
+        }
     })
   
     function renderMap() {
