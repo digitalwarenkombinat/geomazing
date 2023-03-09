@@ -139,7 +139,7 @@ $(document).one(":passagedisplay", function() {
           }
         });
 
-        new mapboxgl.Popup({closeButton: false, closeOnClick: false, className: 'popup', offset: [0, -50]})
+        new mapboxgl.Popup({closeButton: false, closeOnClick: false, className: 'popup', offset: [0, -50], anchor: 'bottom'})
         .setLngLat([fence.longitude, fence.latitude])
         .setHTML("<h1>"+fence.description+"</h1>")
         .addTo(map);

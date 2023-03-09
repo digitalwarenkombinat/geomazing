@@ -378,7 +378,7 @@ $(document).one(&quot;:passagedisplay&quot;, function() {
       // console.log($(&quot;.mapboxgl-ctrl-geolocate&quot;));
 	    $(&quot;.mapboxgl-ctrl-geolocate&quot;).click();
     })
-  
+
     map.on(&#39;zoomend&#39;, () =&gt; { 
       let zoom = map.getZoom().toFixed();
       // Zoomstufe in Pixel wird als Größe der H1-Überschrift gesetzt 
@@ -403,15 +403,14 @@ $(document).one(&quot;:passagedisplay&quot;, function() {
             &#39;fill-opacity&#39;: 0.6
           }
         });
-        
-        new mapboxgl.Popup({closeButton: false, closeOnClick: false, className: &#39;popup&#39;, offset: [0, -50]})
+
+        new mapboxgl.Popup({closeButton: false, closeOnClick: false, className: &#39;popup&#39;, offset: [0, -50], anchor: &#39;bottom&#39;})
         .setLngLat([fence.longitude, fence.latitude])
         .setHTML(&quot;&lt;h1&gt;&quot;+fence.description+&quot;&lt;/h1&gt;&quot;)
         .addTo(map);
-        
       }
     }
-    
+
    })
   });
 &lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="3" name="lene_tauscho" tags="" position="1000,800" size="100,100">Lene Tauscho
