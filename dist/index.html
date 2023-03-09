@@ -114,6 +114,7 @@ var LZString={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234
     text-align: center;
     border-bottom-right-radius:60px 5px;
   	hyphens: auto;
+  	line-height: 1.5rem;
 }
     
 .popup .mapboxgl-popup-content::before {
@@ -382,8 +383,8 @@ $(document).one(&quot;:passagedisplay&quot;, function() {
       let zoom = map.getZoom().toFixed();
       // Zoomstufe in Pixel wird als Größe der H1-Überschrift gesetzt 
       $(&#39;.mapboxgl-popup-content h1&#39;).css(&#39;font-size&#39;, zoom+&#39;px&#39;)
-      // Ab Zoomstufe kleiner 18 wird das Padding der Box entfernt um Platz zu sparen
-      zoom &lt; 18 ? $(&#39;.mapboxgl-popup-content&#39;).css(&#39;padding&#39;,0) : $(&#39;.mapboxgl-popup-content&#39;).css(&#39;padding&#39;, &#39;10px 10px 15px&#39;)
+      // Ab Zoomstufe kleiner 14 werden die Boxen ausgeblendet
+      zoom &lt; 14 ? $(&#39;.mapboxgl-popup-content&#39;).css(&#39;display&#39;,&#39;none&#39;) : $(&#39;.mapboxgl-popup-content&#39;).css(&#39;display&#39;, &#39;block&#39;)
     })
   
     function renderMap() {
@@ -407,6 +408,7 @@ $(document).one(&quot;:passagedisplay&quot;, function() {
         .setLngLat([fence.longitude, fence.latitude])
         .setHTML(&quot;&lt;h1&gt;&quot;+fence.description+&quot;&lt;/h1&gt;&quot;)
         .addTo(map);
+        
       }
     }
     

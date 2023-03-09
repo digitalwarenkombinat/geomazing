@@ -118,8 +118,8 @@ $(document).one(":passagedisplay", function() {
       let zoom = map.getZoom().toFixed();
       // Zoomstufe in Pixel wird als Größe der H1-Überschrift gesetzt 
       $('.mapboxgl-popup-content h1').css('font-size', zoom+'px')
-      // Ab Zoomstufe kleiner 18 wird das Padding der Box entfernt um Platz zu sparen
-      zoom < 18 ? $('.mapboxgl-popup-content').css('padding',0) : $('.mapboxgl-popup-content').css('padding', '10px 10px 15px')
+      // Ab Zoomstufe kleiner 14 werden die Boxen ausgeblendet
+      zoom < 14 ? $('.mapboxgl-popup-content').css('display','none') : $('.mapboxgl-popup-content').css('display', 'block')
     })
   
     function renderMap() {

@@ -14,6 +14,7 @@ body { margin: 0; padding: 0; }
     text-align: center;
     border-bottom-right-radius:60px 5px;
     hyphens: auto;
+    line-height: 1.5rem;
 }
     
 .popup .mapboxgl-popup-content::before {
