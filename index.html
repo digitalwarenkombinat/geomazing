@@ -260,7 +260,14 @@ setup.getDisplayedFences = function (displayFences) {
   };
 
 }());</script><tw-passagedata pid="1" name="Intro" tags="" position="1000,600" size="100,100">[[Starte das Abenteuer|Map]]
-</tw-passagedata><tw-passagedata pid="2" name="Map" tags="" position="1200,600" size="100,100">&lt;div id=&quot;map&quot;&gt;&lt;/div&gt;
+
+&lt;&lt;script&gt;&gt;
+if (window.matchMedia(&#39;(display-mode: standalone)&#39;).matches) {
+  alert(&quot;PWA wurde installiert&quot;);
+} else {
+ alert(&quot;Bitte PWA installieren&quot;);
+}
+&lt;&lt;/script&gt;&gt;</tw-passagedata><tw-passagedata pid="2" name="Map" tags="" position="1200,600" size="100,100">&lt;div id=&quot;map&quot;&gt;&lt;/div&gt;
 
 &lt;&lt;script&gt;&gt;
 $(document).one(&quot;:passagedisplay&quot;, function() {
